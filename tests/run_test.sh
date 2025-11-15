@@ -20,7 +20,7 @@ fi
 #verificar si 'pip' esta instalado correctamente
 echo  "instalando dependencias.."
 pip install --upgrade pip --break-system-packages
-pip install -r requeriments.txt --break-system-packages
+pip install -r requirements.txt --break-system-packages
 
 #Ejecutar las pruebas
 echo "Ejecutando prubas con pytest.."
