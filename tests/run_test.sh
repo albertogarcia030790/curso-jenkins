@@ -1,12 +1,22 @@
 #!/bin/bash
-echo "ejecutando pruebas"
+set -e
 
-# usar pytest si está disponible en el PATH
-if command -v pytest >/dev/null 2>&1; then
-    pytest --maxfail=1 --disable-warnings -q
-else
-    echo "pytest no está instalado en Jenkins"
-    exit 1
-fi
+echo "Ejecutando pruebas sin venv"
 
-echo "pruebas finalizadas"
+# Asegúrate de usar python3 y pip3 del sistema
+PYTHON_BIN=$(which python3)
+PIP_BIN=$(which pip3)
+
+echo "Usando Python en: $PYTHON_BIN"
+echo "Usando pip en: $PIP_BIN"
+
+# Instala pytest y dependencias solo para el usuario de Jenkins
+$PIP_BIN install --user -r requirements.txt
+
+# Asegúrate de que el directorio de scripts de usuario esté en PATH
+export PATH=$HOME/.local/bin:$PATH
+
+echo "Ejecutando pruebas con pytest"
+pytest -v --html=report.html
+
+echo "Pruebas finalizadas"
