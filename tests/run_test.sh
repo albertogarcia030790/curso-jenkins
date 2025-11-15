@@ -1,19 +1,13 @@
 #!/bin/bash
-echo "activando entorno virtual"
+set -e
 
-# Crear entorno virtual si no existe
-if [ ! -d "venv" ]; then
-    echo "Creando entorno virtual"
-    python3 -m venv venv
-fi
-
-# Activar entorno virtual
-source venv/bin/activate
+echo "activando entorno (sin venv, Jenkins no lo permite)"
+export PATH=$HOME/.local/bin:$PATH
 
 echo "instalando dependencias"
-pip install -r requirements.txt --break-system-packages || pip install -r requirements.txt
+pip3 install --user -r requirements.txt
 
 echo "ejecutando pruebas con pytest"
-pytest --maxfail=1 --disable-warnings --junitxml=report.xml
+pytest --html=report.html --self-contained-html
 
 echo "pruebas finalizadas resultados en reportes"
