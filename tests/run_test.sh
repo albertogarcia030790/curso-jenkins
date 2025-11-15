@@ -1,22 +1,29 @@
 #!/bin/bash
-set -e
+echo "Iniciando ejecucion de pruebas en jenkins"
 
-echo "Ejecutando pruebas sin venv"
+# verificar si el entorno virtual existe
+if [ ! -d "venv"]; then 
+   echo "entorno virtual no encotrado. Creandolo..."
+   python3 -m venv venv
+fi
 
-# Asegúrate de usar python3 y pip3 del sistema
-PYTHON_BIN=$(which python3)
-PIP_BIN=$(which pip3)
+#Activar el entorno virtual correctamente
+if [ f "venv/bin/activate"]; then
+   source venv/bin/activate
+elif [ f "venv/Scripts/activate" ]; then
+   source venv/Scripts/activate
+else 
+   echo "Error: no se pudo activar el entorno virtual"
+   exit 1
+fi
 
-echo "Usando Python en: $PYTHON_BIN"
-echo "Usando pip en: $PIP_BIN"
+#verificar si 'pip' esta instalado correctamente
+echo  "instalando dependencias.."
+pip install --upgrade pip --break-system-packages
+pip install -r requeriments.txt --break-system-packages
 
-# Instala pytest y dependencias solo para el usuario de Jenkins
-$PIP_BIN install --user -r requirements.txt
+#Ejecutar las pruebas
+echo "Ejecutando prubas con pytest.."
+venv/bin/python -m pytest tests/
 
-# Asegúrate de que el directorio de scripts de usuario esté en PATH
-export PATH=$HOME/.local/bin:$PATH
-
-echo "Ejecutando pruebas con pytest"
-pytest -v --html=report.html
-
-echo "Pruebas finalizadas"
+echo "pruebas finalizadas. Reportes en reports"
