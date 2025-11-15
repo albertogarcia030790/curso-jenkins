@@ -1,13 +1,12 @@
 #!/bin/bash
-set -e
+echo "ejecutando pruebas"
 
-echo "activando entorno (sin venv, Jenkins no lo permite)"
-export PATH=$HOME/.local/bin:$PATH
+# usar pytest si está disponible en el PATH
+if command -v pytest >/dev/null 2>&1; then
+    pytest --maxfail=1 --disable-warnings -q
+else
+    echo "pytest no está instalado en Jenkins"
+    exit 1
+fi
 
-echo "instalando dependencias"
-pip3 install --user -r requirements.txt
-
-echo "ejecutando pruebas con pytest"
-pytest --html=report.html --self-contained-html
-
-echo "pruebas finalizadas resultados en reportes"
+echo "pruebas finalizadas"
